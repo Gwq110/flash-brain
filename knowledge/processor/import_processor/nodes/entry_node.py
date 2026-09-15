@@ -60,7 +60,7 @@ class EntryNode(BaseNode):
         return state
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO,)
+    logging.basicConfig(level=logging.INFO)
     entry_node = EntryNode()
     init_state = {
         "import_file_path": r"D:\pythonCode\PythonProject\shopkeeper-brain\knowledge\processor\import_processor\input_dir\万用表RS-12的使用.pdf",

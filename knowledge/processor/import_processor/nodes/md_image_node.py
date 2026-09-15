@@ -71,7 +71,7 @@ class _ImageInfo:
 
 
 class _ImageScanner():
-    def __init__(self,logger:Logger, config: config) :
+    def __init__(self, logger:Logger, config: config.ImportConfig) :
         self.logger = logger
         self.config = config
 

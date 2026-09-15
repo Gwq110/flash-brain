@@ -45,3 +45,6 @@ tmp/
 # 目录结构保留（靠 .gitkeep 占位），生成的内容不进仓库
 knowledge/processor/import_processor/output_dir/**
 !knowledge/processor/import_processor/output_dir/.gitkeep
+/knowledge/processor/import_processor/input_dir/test_hierarchy.md
+/knowledge/processor/import_processor/input_dir/test_spilt.md
+/knowledge/processor/import_processor/input_dir/test_spilt_1.md
