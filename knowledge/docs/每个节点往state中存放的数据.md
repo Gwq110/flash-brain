@@ -18,10 +18,10 @@
 
 4. md_image_node:
     {
-        "md_content" = # Markdown 文档内容(将图片上下文传给VLM获取照片摘要并回填到md文档中)
+        "md_content" =  Markdown 文档内容(将图片上下文传给VLM获取照片摘要并回填到md文档中)
     }
 
 5. document_split_node:
     {
-        
+        "chunks" :  文档切片列表
     }
