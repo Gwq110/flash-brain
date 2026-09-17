@@ -22,7 +22,6 @@ class DocumentSplitNode(BaseNode):
         state["chunks"] = final_chunks
         #5.将chunks备份成json文件，方便后续测试
         self._backup_chunks(final_chunks,state)
-        pass
 
 
     def _validate_state(self, state: ImportGraphState) -> Tuple[str, str, int, int]:
@@ -42,7 +41,8 @@ class DocumentSplitNode(BaseNode):
 
 
     #安装标题切分文档
-    def _split_by_head(self, new_md_content, file_title) -> List[Dict[str,Any]]:
+    @staticmethod
+    def _split_by_head(new_md_content, file_title) -> List[Dict[str,Any]]:
         # 每一个标题下对应的内容为一个section
         # {
         #       "body": "收集到的所有行"
@@ -78,9 +78,9 @@ class DocumentSplitNode(BaseNode):
             title = current_title if current_title else file_title
             # 收集parent_title,从当前标题往前遍历hierarchy数组
             parent_title = ""
-            for i in range(current_title_level - 1, 0, -1):
-                if hierarchy[i]:
-                    parent_title = hierarchy[i]
+            for index in range(current_title_level - 1, 0, -1):
+                if hierarchy[index]:
+                    parent_title = hierarchy[index]
                     break
             section = {
                 "body": content,
@@ -138,7 +138,8 @@ class DocumentSplitNode(BaseNode):
         return final_sections
 
 
-    def _split_long_section(self,section:Dict[str,Any], max_content_length:int) -> List[Dict[str,Any]]:
+    @staticmethod
+    def _split_long_section(section:Dict[str,Any], max_content_length:int) -> List[Dict[str,Any]]:
         #将超过max_content_length的进行二次切分
         # {
         #       "body": "收集到的所有行"
@@ -187,7 +188,8 @@ class DocumentSplitNode(BaseNode):
             result_sections.append(section)
         return result_sections
 
-    def merge_short_section(self, current_sections:List[Dict[str,Any]], min_content_length:int) -> List[Dict[str,Any]]:
+    @staticmethod
+    def merge_short_section(current_sections:List[Dict[str,Any]], min_content_length:int) -> List[Dict[str,Any]]:
 
         #1. 获取下标为0的section，记录为current_section
         current_section = current_sections[0]
@@ -220,7 +222,8 @@ class DocumentSplitNode(BaseNode):
         #5. 返回final_sections
         return final_sections
 
-    def _assemble_chunks(self, final_sections) -> List[Dict[str,Any]]:
+    @staticmethod
+    def _assemble_chunks(final_sections) -> List[Dict[str,Any]]:
         chunks = []
         # 1. 遍历每一个section
         for section in final_sections:
@@ -261,10 +264,11 @@ class DocumentSplitNode(BaseNode):
 
 
 if "__main__" == __name__:
-    md_path = r"D:\pythonCode\PythonProject\shopkeeper-brain\knowledge\processor\import_processor\output_dir\万用表RS-12的使用\万用表RS-12的使用.md"
+    md_path = r"D:\pythonCode\PythonProject\shopkeeper-brain\knowledge\processor\import_processor\output_dir\万用表RS-12的使用\万用表RS-12的使用_new.md"
 
     with open(md_path, "r", encoding="utf-8") as file:
         md_content = file.read()
+    md_path = r"D:\pythonCode\PythonProject\shopkeeper-brain\knowledge\processor\import_processor\output_dir\万用表RS-12的使用\万用表RS-12的使用.md"
 
     init_state = {
         "md_path": md_path,
