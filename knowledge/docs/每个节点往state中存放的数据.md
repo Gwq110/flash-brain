@@ -25,3 +25,14 @@
     {
         "chunks" :  文档切片列表
     }
+
+6. item_name_recognition_node:
+{
+     "item_name" : 商品名称
+     "chunks" : 文档切片列表（带商品名）
+}
+
+7. bge_embedding_chunks_node:
+{
+     "chunks" : 文档切片列表（带商品名,带稀疏向量和稠密向量）
+}

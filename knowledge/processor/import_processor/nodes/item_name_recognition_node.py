@@ -185,6 +185,9 @@ class ItemNameRecognitionNode(BaseNode):
         dense_vector = hybrid_vectors.get("dense")[0]
         # 获取稀疏向量
         sparse_vector = hybrid_vectors.get("sparse")[0]
+        if dense_vector and sparse_vector:
+            return
+
         insert_data = {
             "item_name": item_name,
             "dense_vector": dense_vector,
