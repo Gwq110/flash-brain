@@ -1,7 +1,0 @@
-# MinerU PDF 解析产物输出目录
-#
-# 本目录下的文件由 pdf_to_md_node 解析 PDF 后自动生成
-# （content_list.json / layout.json / *.md / images/ / *_result.zip 等），
-# 属于运行时产物，已在 .gitignore 中排除，不提交到仓库。
-#
-# 此文件仅用于占位，保证目录结构在 clone 后存在。

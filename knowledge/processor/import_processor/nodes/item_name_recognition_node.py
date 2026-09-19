@@ -13,7 +13,7 @@ from knowledge.utils.embedding_util import generate_bge_m3_hybrid_vectors
 
 
 class ItemNameRecognitionNode(BaseNode):
-    node_name = "item_name_recognition_node"
+    name = "item_name_recognition_node"
     def process(self, state: ImportGraphState) -> ImportGraphState:
         #1. 参数的校验
         file_title, chunks, item_name_chunk_k, item_name_chunk_size = self._validate_state(state)
@@ -52,7 +52,7 @@ class ItemNameRecognitionNode(BaseNode):
             raise StateFieldError(node_name=self.name, field_name="file_title", expected_type=str)        # 3.获取chunks, 也就是上一步拆分之后的结果, 这个内容可以提供作为LLM的上下文信息, 让LLM进行商品名的提取
         chunks = state.get("chunks")
         # 4.判断chunks是否为空，且其类型是否是list，如果不满足则抛出异常
-        if not chunks and type(chunks) is list:
+        if not chunks or not isinstance(chunks, list):
             raise StateFieldError(node_name=self.name, field_name="chunks",expected_type=list)
         # 5.从config中获取item_name_chunk_k和item_name_chunk_size，分别表示商品名提取能使用的最大chunk数量，以及最大的长度
         item_name_chunk_k = self.config.item_name_chunk_k
@@ -134,6 +134,10 @@ class ItemNameRecognitionNode(BaseNode):
         except Exception as e:
             self.logger.error(f"获取Milvus客户端失败,错误信息:{e}")
             raise MilvusError(message=f"获取Milvus客户端失败,错误信息:{e}",node_name=self.name)
+        #向量生成失败时跳过入库，避免下游拿到 None
+        if not hybrid_vectors:
+            self.logger.warning("hybrid_vectors 为空，跳过 item_name 入库")
+            return
         #判断存储item_name的colletion是否存在，不存在就创建
         collection_name = self.config.item_name_collection
         if not milvus_client.has_collection(collection_name):
@@ -185,7 +189,7 @@ class ItemNameRecognitionNode(BaseNode):
         dense_vector = hybrid_vectors.get("dense")[0]
         # 获取稀疏向量
         sparse_vector = hybrid_vectors.get("sparse")[0]
-        if dense_vector and sparse_vector:
+        if not dense_vector or not sparse_vector:
             return
 
         insert_data = {

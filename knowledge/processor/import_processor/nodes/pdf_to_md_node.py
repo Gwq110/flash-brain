@@ -12,7 +12,7 @@ from knowledge.processor.import_processor.state import ImportGraphState
 
 
 class PdfToMdNode(BaseNode):
-    node_name = "pdf_to_md_node"
+    name = "pdf_to_md_node"
     def process(self, state: ImportGraphState) -> ImportGraphState:
         #1.上传pdf并轮询pdf解析结果
         pdf_path = state.get("pdf_path")
@@ -179,7 +179,7 @@ class PdfToMdNode(BaseNode):
 
         self.logger.info("zip改名成功")
         #4. 返回md文件的路径
-        return str(md_file_path)
+        return str(new_md_file_path)
 
 
 

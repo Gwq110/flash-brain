@@ -294,7 +294,7 @@ class ImageUploader:
     def _upload_all(self,document_name : str,image_info_list :List[_ImageInfo]):
         remote_urls = {}
         try:
-            minio_client = StorageClients.get_minio()
+            minio_client = StorageClients.get_minio_client()
         except ConnectionError as e:
             self.logger.warning(f"获取MinIO客户端失败，无法上传图片: {str(e)}")
             #兜底，所有图片使用原来路径

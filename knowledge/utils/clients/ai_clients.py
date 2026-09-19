@@ -33,8 +33,8 @@ class AIClients(BaseClientManager):
     @classmethod
     def _create_vlm_client(cls) -> OpenAI:
         try:
-            api_key = cls._require_env("OPEN_API_KEY")
-            base_url = cls._require_env("OPEN_API_BASE")
+            api_key = cls._require_env("OPENAI_API_KEY")
+            base_url = cls._require_env("OPENAI_API_BASE")
             client = OpenAI(api_key=api_key, base_url=base_url)
             logger.info(f"OpenAI 客户端初始化成功 (base_url={base_url})")
 

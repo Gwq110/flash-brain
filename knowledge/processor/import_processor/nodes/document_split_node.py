@@ -9,7 +9,7 @@ from knowledge.utils.markdown_util import MarkdownTableLinearizer
 
 
 class DocumentSplitNode(BaseNode):
-    node_name = "document_split_node"
+    name = "document_split_node"
     def process(self, state: ImportGraphState) -> ImportGraphState:
         #1. 参数校验
         new_md_content, file_title, max_content_length, min_content_length = self._validate_state(state)
@@ -22,6 +22,7 @@ class DocumentSplitNode(BaseNode):
         state["chunks"] = final_chunks
         #5.将chunks备份成json文件，方便后续测试
         self._backup_chunks(final_chunks,state)
+        return state
 
 
     def _validate_state(self, state: ImportGraphState) -> Tuple[str, str, int, int]:

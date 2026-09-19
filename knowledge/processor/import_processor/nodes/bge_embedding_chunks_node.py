@@ -93,10 +93,9 @@ class BgeEmbeddingChunksNode(BaseNode):
         # 2. 将chunks写入到备份文件中
         try:
             with open(backup_file_path, "w", encoding="utf-8") as f:
-                json.dump(chunks, f, ensure_ascii=False, indent=4)
+                json.dump(embedding_chunks, f, ensure_ascii=False, indent=4)
         except Exception as e:
-            self.logger.warning(f"{md_path_obj.stem}文件备份成chunks_item_name.json失败,但是不影响主流程")
-        pass
+            self.logger.warning(f"{md_path_obj.stem}文件备份成chunks_item_name.json失败,但是不影响主流程: {e}")
 
 
 if __name__ == "__main__":
