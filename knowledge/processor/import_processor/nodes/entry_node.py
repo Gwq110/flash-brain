@@ -39,6 +39,9 @@ class EntryNode(BaseNode):
         #3.判断文件类型（pdf,md)
         #3.1 获取文件后缀
         self.log_step(step_name="step3",message="识别文件真实类型")
+        #3.2 先重置两个读取标志位，保证标志位只由真实文件类型决定
+        state["is_pdf_read_enabled"] = False
+        state["is_md_read_enabled"] = False
         suffix = import_file_path_obj.suffix
         if suffix == ".pdf":
             # 如果是pdf，则设置is_pdf_read_enabled为Ture，并设置pdf_path的值

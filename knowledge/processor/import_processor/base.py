@@ -5,10 +5,12 @@
 """
 
 from abc import ABC, abstractmethod
+import time
 from typing import TypeVar, Optional
 import logging
 from knowledge.processor.import_processor.config import ImportConfig, get_config
 from knowledge.processor.import_processor.exceptions import ImportProcessError
+from knowledge.utils.task_util import add_running_task, add_done_task, add_node_duration
 
 T = TypeVar("T")  # 泛型状态类型
 
@@ -65,12 +67,20 @@ class BaseNode(ABC):
             # 1. 开始准备执行节点
             self.logger.info(f"--- {self.name} 开始 ---")
 
-            # 2. 执行节点
+            # 2. 添加当前节点到running节点
+            start_time = time.time()
+            task_id = state["task_id"]
+            add_running_task(task_id,self.name)
+            # 3. 执行节点
             result = self.process(state)
 
-            # 3. 执行节点成功
+            # 4. 执行节点成功
             self.logger.info(f"--- {self.name} 完成 ---")
 
+            # 5. 添加当前节点到done节点,记录节点执行时间
+            node_duration = time.time() - start_time
+            add_node_duration(task_id,self.name,node_duration)
+            add_done_task(task_id,self.name)
             return result
         except Exception as e:
             self.logger.error(f"{self.name} 执行失败: {e}")

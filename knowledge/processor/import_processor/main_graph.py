@@ -13,10 +13,10 @@ from knowledge.processor.import_processor.state import ImportGraphState
 #langGraph 的具体流程
 def import_router(state: ImportGraphState) :
     #1. 判断是不是pdf文件
-    if state["is_pdf_read_enabled"]:
+    if state.get("is_pdf_read_enabled"):
         #是pdf文件
         return "pdf_to_md_node"
-    elif state["is_md_read_enabled"]:
+    elif state.get("is_md_read_enabled"):
         # 是md文件
         return "md_image_node"
     else:

@@ -80,6 +80,10 @@ class _ImageScanner():
         image_info_list = []
         # 2. 按行切分md文件
         md_lines = md_content.split("\n")
+        # 1.1 图片目录不存在时（例如直接上传的md文件），跳过图片处理
+        if not image_dir_obj.is_dir():
+            self.logger.warning(f"图片目录不存在，跳过图片处理：{image_dir_obj}")
+            return image_info_list
         # 3，遍历图片目录的每一个图片文件，与上面md_lines中的进行匹配
         for image_file in image_dir_obj.iterdir():
             # 过滤子目录
@@ -366,7 +370,7 @@ class MdImageNode(BaseNode):
         new_md_content = self.image_uploader.upload_and_replace(md_content=md_content, document_name=md_path_obj.stem,
                                                          image_info_list=image_info_list,
                                                          image_summarizes=image_summarizes)
-        print(new_md_content)
+        # print(new_md_content)
 
         #6. 将回填后的内容，备份成新md文件（便于测试观察）
         self.md_file_handler.backup_md(md_content=new_md_content,md_path=md_path)
