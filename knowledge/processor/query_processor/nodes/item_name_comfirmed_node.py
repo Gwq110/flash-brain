@@ -289,7 +289,7 @@ class ItemNameComfirmedNode(BaseNode):
 if __name__ == "__main__":
     node = ItemNameComfirmedNode()
     state = {
-        "original_query": 'RS PRO RS-12 数字万用表与Cable网桥的区别',
+        "original_query": '特斯拉model3怎么开启自动驾驶',
     }
 
     final_state = node(state)

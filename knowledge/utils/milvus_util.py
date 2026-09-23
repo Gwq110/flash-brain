@@ -130,7 +130,7 @@ def execute_hybrid_search_query(milvus_client: MilvusClient,
         raise RuntimeError(f"执行Milvus混合搜索失败 (collection={collection_name}): {e}") from e
 
 
-def _item_names_filter(item_names: List[str]) -> Tuple[str, Dict[str, Any]]:
+def item_names_filter(item_names: List[str]) -> Tuple[str, Dict[str, Any]]:
     expr = "item_name in {item_names}"
     expr_params = {"item_names": item_names}
     return expr, expr_params

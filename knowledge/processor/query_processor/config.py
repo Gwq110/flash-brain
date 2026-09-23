@@ -77,6 +77,9 @@ class QueryConfig:
     openai_api_key: str = field(
         default_factory=lambda: os.getenv("OPENAI_API_KEY", "")
     )
+    openai_mcp_key: str = field(
+        default_factory=lambda: os.getenv("MCP_DASHSCOPE_API_KEY", "")
+    )
     default_model: str = field(
         default_factory=lambda: os.getenv("MODEL", "")
     )

@@ -49,5 +49,5 @@ def generate_bge_m3_hybrid_vectors(model: BGEM3EmbeddingFunction, embedding_docu
     # 6. 返回
     return {
         "dense": [den.tolist() for den in embedding_result["dense"]],
-        "sparse": processed_sparse
+        "sparse": processed_sparse,
     }
