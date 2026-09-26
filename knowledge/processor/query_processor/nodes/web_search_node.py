@@ -10,12 +10,12 @@ from knowledge.processor.query_processor.state import QueryGraphState
 
 
 class WebSearchNode(BaseNode):
+    name = "web_search_node"
     def process(self, state: QueryGraphState) -> QueryGraphState:
         # 1. 参数校验
         rewritten_query, item_names = self._validate_state(state)
         # 2. 调用mcp服务获取结果（使用mcp原生SDK，绕过openai-agents封装的兼容性bug）
         mcp_web_search = asyncio.run(self.mcp_web_search(rewritten_query))
-        print(mcp_web_search)
         #3. 对mcp结果进行格式化
         #获取结果中的text，是一个json字符串
         result_text = mcp_web_search.content[0].text
@@ -30,9 +30,8 @@ class WebSearchNode(BaseNode):
                 "url": page["url"]
             })
 
-        state["web_search_docs"] = web_search_docs
-
-        return state
+        #返回结果（只返回本节点负责的字段，避免并行节点同时写同一 key 冲突）
+        return {"web_search_docs": web_search_docs}
 
     async def mcp_web_search(self, rewritten_query: str):
         """使用mcp原生SDK直接连接DashScope WebSearch MCP服务"""

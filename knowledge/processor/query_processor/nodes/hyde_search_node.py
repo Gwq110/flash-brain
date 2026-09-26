@@ -19,8 +19,6 @@ class HydeSearchNode(BaseNode):
 
         #2. 调用大模型生成假设性答案
         hy_document = self._generate_hy_document(rewritten_query, item_names)
-        print("="*40)
-        print(f"hy_document:{hy_document}")
         #3. 获取嵌入模型对象和milvus客户端对象
         # 获取嵌入模型对象
         try:
@@ -56,9 +54,8 @@ class HydeSearchNode(BaseNode):
             limit=self.config.hyde_search_limit,
             output_fields=["item_name", "title", "content"]
         )
-        #9. 将hyde检索的结果存入state并返回
-        state["hyde_embedding_chunks"] = hybrid_search_result
-        return state
+        #9. 返回本节点负责的字段（只返回部分更新，避免并行节点同时写同一 key 冲突）
+        return {"hyde_embedding_chunks": hybrid_search_result[0]}
 
     def _validate_state(self, state: QueryGraphState) -> Tuple[str, List[str]]:
         rewritten_query = state["rewritten_query"]

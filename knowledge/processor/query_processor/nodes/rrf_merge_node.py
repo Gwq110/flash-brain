@@ -16,9 +16,8 @@ class RRFMergeNode(BaseNode):
         #3. 将两路结果组装成列表，并且给设置权重
         rrf_inputs = [(embedding_chunks,1.0),(hyde_embedding_chunks,1.0)]
 
-
         #进行RRF融合
-        sorted_chunks = self._rrf_merge(rrf_inputs)
+        sorted_chunks = self._rrf_merge(rrf_inputs,self.config.rrf_max_results)
 
         state["rrf_chunks"] = sorted_chunks
         return state
@@ -48,7 +47,7 @@ class RRFMergeNode(BaseNode):
             })
         return format_chunks
 
-    def _rrf_merge(self, rrf_inputs:List[Tuple[List[dict[str,Any]],float]]) -> List[Dict[str, Any]]:
+    def _rrf_merge(self, rrf_inputs:List[Tuple[List[dict[str,Any]],float]],rrf_max_limit:int = 0) -> List[Dict[str, Any]]:
         #声明一个容器用于存储每个文档的总得分
         chunk_score = {}
         #声明一个容器，用来存储最终结果[{id,title,content,score}]
@@ -74,7 +73,8 @@ class RRFMergeNode(BaseNode):
         result_chunks = chunk_data.values()
         #先排序
         sorted_chunks = sorted(result_chunks, key=lambda x: x["score"], reverse=True)
-        return sorted_chunks
+        return sorted_chunks[:rrf_max_limit] if rrf_max_limit else sorted_chunks
+
 
 
 if __name__ == "__main__":

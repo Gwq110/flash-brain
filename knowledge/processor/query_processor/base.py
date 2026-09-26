@@ -72,15 +72,15 @@ class BaseNode(ABC):
             if task_id:
                 add_running_task(task_id, self.name)  # 当前正准备执行的节点加入
                 # 如果是流式
-                if is_stream:
-                    self._push_progress(task_id)
+                # if is_stream:
+                #     self._push_progress(task_id)
 
             result = self.process(state)
             if task_id:
                 add_done_task(task_id, self.name)  # 当前正准备执行的节点加入
                 # 如果是流式
-                if is_stream:
-                    self._push_progress(task_id)
+                # if is_stream:
+                #     self._push_progress(task_id)
 
             self.logger.info(f"--- {self.name} 完成 ---")
             return result

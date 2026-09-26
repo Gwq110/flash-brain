@@ -11,6 +11,7 @@ from knowledge.utils.clients.ai_clients import AIClients
 from knowledge.utils.clients.storage_clients import StorageClients
 from knowledge.utils.embedding_util import generate_bge_m3_hybrid_vectors
 from knowledge.utils.milvus_util import create_hybrid_search_requests, execute_hybrid_search_query
+from knowledge.utils.mongo_history_util import get_recent_messages
 
 
 class _ItemNameAligner:
@@ -192,6 +193,7 @@ class  _ItemNameExtractor:
         #5. 返回清洗结果
         return self._clean_and_parse(llm_content)
 
+
     def _clean_and_parse(self, llm_content:str) -> Dict[str,Any]:
         #1. 去掉代码块
         #1.1 去掉前面的 ```
@@ -222,7 +224,7 @@ class  _ItemNameExtractor:
         return {"item_names":item_names,"rewritten_query":rewritten_query}
 
 
-class ItemNameComfirmedNode(BaseNode):
+class ItemNameConfirmedNode(BaseNode):
     name = "item_name_comfirmed_node"
 
     def __init__(self):
@@ -259,22 +261,30 @@ class ItemNameComfirmedNode(BaseNode):
         #1. 获取用户问题
         original_query = state.get('original_query')
 
-        #TODO 2. 获取历史对话
-        history_text = ""
-
-        #3. 获取大模型提取的用户提问中的商品名
-        llm_result = self._extractor.extract_item_name(original_query, history_text)
+        #2. 获取历史对话(mongoDB)
+        #获取session_id
+        session_id = state.get('session_id',"")
+        history_messages = get_recent_messages(session_id)
+        state["history"] = history_messages
+        formatted_history_str = ""
+        for msg in history_messages:
+            role = msg.get("role")
+            text = msg.get("text")
+            formatted_history_str += f"{role}: {text}\n"
+                #3. 获取大模型提取的用户提问中的商品名
+        llm_result = self._extractor.extract_item_name(original_query, formatted_history_str)
         print(llm_result)
 
         #4. 根据item_names做判断,进行商品名的对齐
-        confirmed, options = self._item_name_aligner.search_and_align(llm_result["item_names"])
+        confirmed, options = self._item_name_aligner.search_and_align(llm_result.get("item_names"))
 
         #5. 决策
-        self._decide(confirmed, options, state, llm_result["rewritten_query"])
+        self._decide(confirmed, options, state, llm_result.get("rewritten_query"))
 
         return state
 
-    def _decide(self, confirmed:List[str], options:List[str], state:QueryGraphState, rewritten_query:str):
+    @staticmethod
+    def _decide(confirmed:List[str], options:List[str], state:QueryGraphState, rewritten_query:str):
         #判断confirmed里面是否有数据
         if confirmed:
             state["item_names"] = confirmed
@@ -289,7 +299,8 @@ class ItemNameComfirmedNode(BaseNode):
 if __name__ == "__main__":
     node = ItemNameComfirmedNode()
     state = {
-        "original_query": '特斯拉model3怎么开启自动驾驶',
+        "original_query": '怎么测量主板是否通电',
+        "session_id": "2",
     }
 
     final_state = node(state)

@@ -46,9 +46,8 @@ class VectorSearchNode(BaseNode):
             limit=self.config.embedding_search_limit,
             output_fields=["item_name","title","content"]
         )
-        #返回结果
-        state["embedding_chunks"] = hybrid_search_result[0]
-        return state
+        #返回结果（只返回本节点负责的字段，避免并行节点同时写同一 key 冲突）
+        return {"embedding_chunks": hybrid_search_result[0]}
 
 
     def _validate_state(self, state: QueryGraphState) -> Tuple[str, List[str]]:
